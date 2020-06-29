@@ -24,7 +24,7 @@ Wenn python pip nicht installiert ist:</p>
 <h2 id="connection">Connection</h2>
 <p>So wird das RC522 an den ESP32 angeschlossen:<br>
 <img src="https://hackster.imgix.net/uploads/attachments/704294/nfc_osc_bb_gBdcDg8Rq9.jpg" alt=""></p>
-
+<p>Connection Table</p>
 <table>
 <thead>
 <tr>
