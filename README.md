@@ -23,7 +23,7 @@ Wenn python pip nicht installiert ist:</p>
 <p>Warten bis alles installiert ist und dann sollte der Code ohne Fehler compilieren</p>
 <h2 id="connection">Connection</h2>
 <p>So wird das RC522 an den ESP32 angeschlossen:<br>
-<img src="https://hackster.imgix.net/uploads/attachments/704294/nfc_osc_bb_gBdcDg8Rq9.jpg" alt="Connection Diagram"></p>
+<img src="https://hackster.imgix.net/uploads/attachments/704294/nfc_osc_bb_gBdcDg8Rq9.jpg" alt="ConnectionDiagram"></p>
 <h1 id="to-do">To Do</h1>
 <p>Es fehlt noch die Kommunikation mit einem externen Server um neue UUIDs zu <strong>laden</strong> und alte zu <strong>löschen</strong><br>
 <strong>Coming soon!</strong></p>
