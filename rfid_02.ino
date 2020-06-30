@@ -1,3 +1,7 @@
+
+
+
+
 /*
  * 
  * All the resources for this project: https://www.hackster.io/Aritro
@@ -8,6 +12,9 @@
 
 #include <SPI.h>
 #include <MFRC522.h>
+#include <ArduinoJson.h>
+#include <WiFi.h>
+
 
 #define SS_PIN 21
 #define RST_PIN 22
@@ -86,15 +93,51 @@ void authorize()
     }
   }
 }
+ const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
+  
+
+DynamicJsonDocument getJson(String url) {
+  
+ DynamicJsonDocument doc(capacity);
+  WiFiClient client;
+  
+  
+ 
+ return doc;
+}
+
+const char* ssid  = "your-ssid";
+const char* password = "your-password";
+
 
 void setup()
 {
   pinMode(relay, OUTPUT);
-  Serial.begin(115200); // Initiate a serial communication
+  Serial.begin(115200); // Initiate a Serial communication
+
+   Serial.println();
+    Serial.println();
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
+
+    WiFi.begin(ssid, password);
+
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+  
   SPI.begin();          // Initiate  SPI bus
   mfrc522.PCD_Init();   // Initiate MFRC522running for: " + interval
   Serial.println("Approximate your card to the reader...");
   Serial.println();
+
+  
 }
 void loop()
 {
@@ -127,7 +170,7 @@ void loop()
   {
     return;
   }
-  //Show UID on serial monitor
+  //Show UID on Serial monitor
   Serial.print("UID tag :");
   String content = "";
   for (byte i = 0; i < mfrc522.uid.size; i++)
