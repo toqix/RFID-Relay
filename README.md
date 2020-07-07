@@ -8,23 +8,26 @@
 <pre><code>https://dl.espressif.com/dl/package_esp32_index.json
 </code></pre>
 <p>Danach die IDE Neustarten und in <strong>Tools/Boards/Boards Manager</strong> hier dann nach esp32 suchen und installieren.</p>
+<p><strong>CP210 Treiber</strong><br>
+Um den ESP32 zu verwenden werden die <strong>CP210</strong> Treiber benötigt <em>(auf MacOS Systemen sind diese vorinstalliert)</em> Auf Linux-Geräten wird dieser Treiber aber benötigt diesen bekommt man  <a href="https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers">Hier</a>.</p>
 <h2 id="python">Python</h2>
-<p>Um den esp32 verwenden zu können muss Python installiert sein das sollte normalerweise aber schon auf deinem Computer installiert sein falls nicht ist hier eine Anleitung zur installation:</p>
-<pre><code>https://www.python.org/downloads/
-</code></pre>
+<p>Um den esp32 verwenden zu können muss Python installiert sein das sollte normalerweise aber schon auf deinem Computer installiert sein falls nicht ist hier eine Anleitung zur installation <a href="https://www.python.org/downloads/">Hier</a></p>
 <p><strong>PySerial</strong><br>
 Wenn bem hochladen des codes Probleme auftreten, da Serial nicht gefunden wird liegt das mit hoher Wahrscheinlichkeit an einer fehlenden PySerial installation <em>(auch dies sollte vorinstalliert sein)</em><br>
 Wenn python pip nicht installiert ist:</p>
-<pre><code>python get-pip.py
+<pre><code>sudo apt-get install pip3
 </code></pre>
 <p>Danch um pyserial zu installieren:</p>
-<pre><code>install pyserial
+<pre><code>pip3 install pyserial
 </code></pre>
-<p>Warten bis alles installiert ist und dann sollte der Code ohne Fehler compilieren</p>
+<p>Warten bis alles installiert ist und dann sollte der Code ohne Fehler kompilieren.</p>
+<blockquote>
+<p>Wichtig hierbei ist dass Administrator-Rechte benötigt werden</p>
+</blockquote>
 <h2 id="connection">Connection</h2>
 <p>So wird das RC522 an den ESP32 angeschlossen:<br>
 <img src="https://hackster.imgix.net/uploads/attachments/704294/nfc_osc_bb_gBdcDg8Rq9.jpg" alt=""></p>
-<p>Connection Table</p>
+
 <table>
 <thead>
 <tr>
