@@ -24,7 +24,7 @@ Wenn python pip nicht installiert ist:</p>
 </code></pre>
 <p>Warten bis alles installiert ist und dann sollte der Code ohne Fehler kcompilieren.</p>
 <blockquote>
-<p>Wichtig hierbei ist dass Administrator-Rechte benötigt werden</p>
+<p>Wichtig hierbei sind Administrator-Rechte benötigt werden</p>
 </blockquote>
 <h2 id="connection">Connection</h2>
 <p>So wird das RC522 an den ESP32 angeschlossen:<br>
