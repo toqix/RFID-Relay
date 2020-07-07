@@ -1,20 +1,33 @@
 
 
-
-
-/*
- * 
- * All the resources for this project: https://www.hackster.io/Aritro
- * Modified by Aritro Mukherjee
- * 
- * 
- */
-
 #include <SPI.h>
 #include <MFRC522.h>
 #include <ArduinoJson.h>
 #include <WiFi.h>
 
+///// WiFi SETTINGS - Replace with your values /////////////////
+const char *ssid = "---------------";
+const char *password = "---------------";
+
+WiFiClient client;
+
+void WiFiStart()
+{
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(100);
+    Serial.print("_");
+  }
+  Serial.println();
+  Serial.println("Done");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+  Serial.println("");
+}
 
 #define SS_PIN 21
 #define RST_PIN 22
@@ -65,10 +78,10 @@ void timeUp()
   }
   else if (authorized)
   {
+    Serial.print("Override TV-Staying On");
     authorized = false;
     timeIsUp = false;
     previousMillis = millis();
-    Serial.print("Override TV-Staying On");
   }
 }
 
@@ -93,52 +106,81 @@ void authorize()
     }
   }
 }
- const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
-  
+const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
 
-DynamicJsonDocument getJson(String url) {
-  
- DynamicJsonDocument doc(capacity);
-  WiFiClient client;
-  
-  
- 
- return doc;
+DynamicJsonDocument getJson()
+{
+
+  DynamicJsonDocument doc(capacity);
+  IPAddress ip(192, 168, 179, 31);
+  if (!client.connect(ip, 80))
+  {
+    Serial.println(F("Connection failed"));
+
+    return doc;
+  }
+
+  Serial.println(F("Connected!"));
+
+  // Send HTTP request
+  client.println(F("GET /data.json HTTP/1.0"));
+  client.println(F("Host: HOSTNAME"));
+  client.println(F("Connection: close"));
+  if (client.println() == 0)
+  {
+    Serial.println(F("Failed to send request"));
+    return doc;
+  }
+
+  // Check HTTP status
+  char status[32] = {0};
+  client.readBytesUntil('\r', status, sizeof(status));
+  // It should be "HTTP/1.0 200 OK" or "HTTP/1.1 200 OK"
+  if (strcmp("HTTP/1.0", "200 OK") != 0)
+  {
+
+    Serial.print(F("Unexpected response: "));
+    Serial.println(status);
+    return doc;
+  }
+
+  // Skip HTTP headers
+  char endOfHeaders[] = "\r\n\r\n";
+  if (!client.find(endOfHeaders))
+  {
+    Serial.println(F("Invalid response"));
+    return doc;
+  }
+
+  // Parse JSON object
+  DeserializationError error = deserializeJson(doc, client);
+  if (error)
+  {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.c_str());
+    return doc;
+  }
+
+  return doc;
 }
-
-const char* ssid  = "your-ssid";
-const char* password = "your-password";
-
 
 void setup()
 {
+
   pinMode(relay, OUTPUT);
   Serial.begin(115200); // Initiate a Serial communication
+  WiFiStart();
+  DynamicJsonDocument doc(capacity);
+  doc = getJson();
 
-   Serial.println();
-    Serial.println();
-    Serial.print("Connecting to ");
-    Serial.println(ssid);
+  Serial.print(doc["data"].as<char *>());
 
-    WiFi.begin(ssid, password);
-
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-    }
-
-    Serial.println("");
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
-  
-  SPI.begin();          // Initiate  SPI bus
-  mfrc522.PCD_Init();   // Initiate MFRC522running for: " + interval
+  SPI.begin();        // Initiate  SPI bus
+  mfrc522.PCD_Init(); // Initiate MFRC522running for: " + interval
   Serial.println("Approximate your card to the reader...");
   Serial.println();
-
-  
 }
+
 void loop()
 {
 
@@ -146,7 +188,6 @@ void loop()
 
   if (isOn)
   {
-
     if (currentMillis - previousMillis > interval)
     {
       if (!timeIsUp)
@@ -155,7 +196,6 @@ void loop()
         Serial.println("Time up TV turns off in 5 Minutes");
         previousMillis2 = currentMillis;
       }
-
       timeUp();
     }
   }
@@ -170,9 +210,11 @@ void loop()
   {
     return;
   }
+  String content = "";
+  /*
   //Show UID on Serial monitor
   Serial.print("UID tag :");
-  String content = "";
+ 
   for (byte i = 0; i < mfrc522.uid.size; i++)
   {
     Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
@@ -182,11 +224,17 @@ void loop()
   }
   Serial.println();
   Serial.print("Message : ");
+*/
+  for (byte i = 0; i < mfrc522.uid.size; i++)
+  {
+    content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
+    content.concat(String(mfrc522.uid.uidByte[i], HEX));
+  }
   content.toUpperCase();
   //if (content.substring(1) == "BD 31 15 2B" 29 F8 A7 48) //change here the UID of the card/cards that you want to give access
   if (content.substring(1) == "BB D0 59 D3")
   {
-    if (millis() - previousMillis3 > 2000)
+    if (millis() - previousMillis3 > 1500)
     {
       Serial.println("Authorized access");
       Serial.println();
@@ -198,7 +246,7 @@ void loop()
 
   else
   {
-    if (millis() - previousMillis3 > 2000)
+    if (millis() - previousMillis3 > 1500)
     {
       Serial.println(" Access denied");
       delay(2000);
