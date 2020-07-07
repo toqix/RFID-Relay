@@ -17,7 +17,7 @@ Um den ESP32 zu verwenden werden die <strong>CP210</strong> Treiber benötigt <e
 <p><strong>PySerial</strong><br>
 Wenn bem hochladen des codes Probleme auftreten, da Serial nicht gefunden wird liegt das mit hoher Wahrscheinlichkeit an einer fehlenden PySerial installation <em>(auch dies sollte vorinstalliert sein)</em><br>
 Wenn python pip nicht installiert ist:</p>
-<pre><code>sudo apt-get install pip3python get-pip.py
+<pre><code>sudo apt-get install pip3
 </code></pre>
 <p>Danch um pyserial zu installieren:</p>
 <pre><code>pip3 install pyserial
