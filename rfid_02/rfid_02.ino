@@ -5,9 +5,6 @@
 #include <ArduinoJson.h>
 #include <WiFi.h>
 
-///// WiFi SETTINGS - Replace with your values /////////////////
-const char *ssid = "---------------";
-const char *password = "---------------";
 
 WiFiClient client;
 
@@ -106,101 +103,9 @@ void authorize()
     }
   }
 }
-const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
 
-DynamicJsonDocument getJson()
-{
-
-  DynamicJsonDocument doc(capacity);
-  IPAddress ip(192, 168, 179, 31);
-  if (!client.connect(ip, 80))
-  {
-    Serial.println(F("Connection failed"));
-
-    return doc;
-  }
-
-  Serial.println(F("Connected!"));
-
-  // Send HTTP request
-  client.println(F("GET /data.json HTTP/1.0"));
-  client.println(F("Host: HOSTNAME"));
-  client.println(F("Connection: close"));
-  if (client.println() == 0)
-  {
-    Serial.println(F("Failed to send request"));
-    return doc;
-  }
-
-  // Check HTTP status
-  char status[32] = {0};
-  client.readBytesUntil('\r', status, sizeof(status));
-  // It should be "HTTP/1.0 200 OK" or "HTTP/1.1 200 OK"
-  if (strcmp("HTTP/1.0", "200 OK") != 0)
-  {
-
-    Serial.print(F("Unexpected response: "));
-    Serial.println(status);
-    return doc;
-  }
-
-  // Skip HTTP headers
-  char endOfHeaders[] = "\r\n\r\n";
-  if (!client.find(endOfHeaders))
-  {
-    Serial.println(F("Invalid response"));
-    return doc;
-  }
-
-  // Parse JSON object
-  DeserializationError error = deserializeJson(doc, client);
-  if (error)
-  {
-    Serial.print(F("deserializeJson() failed: "));
-    Serial.println(error.c_str());
-    return doc;
-  }
-
-  return doc;
-}
-
-void setup()
-{
-
-  pinMode(relay, OUTPUT);
-  Serial.begin(115200); // Initiate a Serial communication
-  WiFiStart();
-  DynamicJsonDocument doc(capacity);
-  doc = getJson();
-
-  Serial.print(doc["data"].as<char *>());
-
-  SPI.begin();        // Initiate  SPI bus
-  mfrc522.PCD_Init(); // Initiate MFRC522running for: " + interval
-  Serial.println("Approximate your card to the reader...");
-  Serial.println();
-}
-
-void loop()
-{
-
-  unsigned long currentMillis = millis();
-
-  if (isOn)
-  {
-    if (currentMillis - previousMillis > interval)
-    {
-      if (!timeIsUp)
-      {
-        timeIsUp = true;
-        Serial.println("Time up TV turns off in 5 Minutes");
-        previousMillis2 = currentMillis;
-      }
-      timeUp();
-    }
-  }
-
-  // Look for new cards
+void handleCard() {
+   // Look for new cards
   if (!mfrc522.PICC_IsNewCardPresent())
   {
     return;
@@ -252,4 +157,47 @@ void loop()
       delay(2000);
     }
   }
+}
+
+
+const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
+
+
+void setup()
+{
+
+  pinMode(relay, OUTPUT);
+  Serial.begin(115200); // Initiate a Serial communication
+  WiFiStart();
+  DynamicJsonDocument doc(capacity);
+  doc = getJson();
+
+  Serial.print(doc["data"].as<char *>());
+
+  SPI.begin();        // Initiate  SPI bus
+  mfrc522.PCD_Init(); // Initiate MFRC522running for: " + interval
+  Serial.println("Approximate your card to the reader...");
+  Serial.println();
+}
+
+void loop()
+{
+
+  unsigned long currentMillis = millis();
+
+  if (isOn)
+  {
+    if (currentMillis - previousMillis > interval)
+    {
+      if (!timeIsUp)
+      {
+        timeIsUp = true;
+        Serial.println("Time up TV turns off in 5 Minutes");
+        previousMillis2 = currentMillis;
+      }
+      timeUp();
+    }
+  }
+  
+ handleCard();
 }
