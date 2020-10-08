@@ -1,7 +1,9 @@
 
 ///// WiFi SETTINGS - Replace with your values /////////////////
-const char *ssid = "---------------";
-const char *password = "";
+const char* ssid = "---------------";
+const char* password = "";
 
-String mastercard = "";
+const char* mastercard = "";
 
+
+const char* serverName = "http://date.jsontest.com/";
