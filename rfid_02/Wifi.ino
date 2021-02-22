@@ -1,9 +1,3 @@
 
 ///// WiFi SETTINGS - Replace with your values /////////////////
-const char* ssid = "---------------";
-const char* password = "";
-
-const char* mastercard = "";
-
-
-const char* serverName = "http://date.jsontest.com/";
+//because of weird issues with my Arduino IDE these values are in the main sketch
