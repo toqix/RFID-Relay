@@ -1,3 +1,5 @@
+// Source: https://github.com/espressif/arduino-esp32/tree/master/libraries/WiFiClientSecure/examples/WiFiClientSecureEnterprise
+
 /*|-----------------------------------------------------------|*/
 /*|WORKING EXAMPLE FOR HTTPS CONNECTION                       |*/
 /*|Author: Bc. Martin Chlebovec                               |*/
