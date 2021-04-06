@@ -98,7 +98,9 @@ Inteface:
     "delay": 45,
     "revalidate": true,
     "revalidateDelay": 5,
-    "",
+    "notify": true,
+    "pathToSound": "/0001.mp3",
+    "volume": 90,
     "cards": [
         {
             "owner": "Vorname Nachname",
@@ -125,7 +127,7 @@ Werden in der JSON gesetzt und vom Arduino gespeichert.
 | ------------------------------------------------- | ---------------------- | ------------------------------------------- | ----------- |
 | <code style=" color: #4183c4;">notify</code>      | <code >boolean</code>  | <code >false</code>                         |Ob die Warnung mit einem Sound gemacht werden soll.|
 | <code style=" color: #4183c4;">pathToSound</code> | <code >string</code>   | <code ><strong>erforderlich</strong></code> |Der Dateipfad zum Sound auf der eingesteckten SD-Karte|
-| <code style=" color: #4183c4;">volume</code>      | <code >int</code>      | <code >1</code>                             |Lautstärke des Sounds, 0-100.|
+| <code style=" color: #4183c4;">volume</code>      | <code >int</code>      | <code >90</code>                             |Lautstärke des Sounds, 0-100.|
 
 \*Erforderlich falls 'notify' auf true gesetzt ist.
 
