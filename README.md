@@ -32,6 +32,8 @@ So wird der ESP32 mit dem RC522 verbunden:
 | GND     | GND  |
 | VCC     | VCC  |
 
+> **Missing:** Sound-Modul, Relay
+
 # Installation für die Verwendung/ Bearbeitung des Quellcodes<a name="setup2"></a>
 
 ## Arduino IDE
@@ -79,11 +81,11 @@ Kann nur in der 'rfid_02.ino' geändert werden. (/rfid_02/rfid_02.ino)
 
 | Name                                             | Typ                    | Standartwert                                | Information |
 | ------------------------------------------------ | ---------------------- | ------------------------------------------- | ----------- |
-| <code style=" color: #4183c4;">ssid</code>       | <code >string</code>   | <code ><strong>erforderlich</strong></code> |             |
-| <code style=" color: #4183c4;">password</code>   | <code >string</code>   | <code ><strong>erforderlich</strong></code> |             |
-| <code style=" color: #4183c4;">server</code>     | <code >string</code>   | <code ><strong>erforderlich</strong></code> |             |
-| <code style=" color: #4183c4;">pathToJSON</code> | <code >string</code>   | <code ><strong>erforderlich</strong></code> |             |
-| <code style=" color: #4183c4;">mastercard</code> | <code >object[]</code> | <code >'{}'</code>                          |             |
+| <code style=" color: #4183c4;">ssid</code>       | <code >string</code>   | <code ><strong>erforderlich</strong></code> |Wlan Name.|
+| <code style=" color: #4183c4;">password</code>   | <code >string</code>   | <code ><strong>erforderlich</strong></code> |Wlan Passwort.|
+| <code style=" color: #4183c4;">server</code>     | <code >string</code>   | <code ><strong>erforderlich</strong></code> | Link zur JSON-Datei mit den UUIDs.|
+| <code style=" color: #4183c4;">mastercard</code> | <code >object[]</code> | <code >'{}'</code>                          |UUID einer Chip-Karte, welche immer funktioniert.|
+| <code style=" color: #4183c4;">relay</code>   | <code >int</code> | <code >16</code> |GPIO Pin an den das Relay angeschlossen wird.|
 
 # Globale Konfiguration
 
@@ -92,45 +94,47 @@ Kann nur in der 'rfid_02.ino' geändert werden. (/rfid_02/rfid_02.ino)
 Inteface:
 
 ```json
-"cards": [
-    {
-        "owner": "",
-        "uuid": ""
-    }
-]
+{
+    "delay": 45,
+    "revalidate": true,
+    "revalidateDelay": 5,
+    "",
+    "cards": [
+        {
+            "owner": "Vorname Nachname",
+            "uuid": "ID"
+        }
+    ]
+}
 ```
 
 `"owner"` ist optional und nur zur wiedererkennung der UUIDs gedacht.
 
 ## Haupteinstellungen
-
+Werden in der JSON gesetzt und vom Arduino gespeichert.
+### Abschallt-Zeiten
 | Name                                                  | Typ                   | Standartwert       | Information |
 | ----------------------------------------------------- | --------------------- | ------------------ | ----------- |
-| <code style=" color: #4183c4;">delay</code>           | <code >int</code>     | <code >45</code>   |             |
-| <code style=" color: #4183c4;">revalidate</code>      | <code >boolean</code> | <code >true</code> |             |
-| <code style=" color: #4183c4;">revalidateDelay</code> | <code >int</code>     | <code >45</code>   |             |
-| <code style=" color: #4183c4;">turnOff</code>         | <code >boolean</code> | <code >true</code> |             |
-| <code style=" color: #4183c4;">turnOffDelay</code>    | <code >int</code>     | <code >0.5</code>  |             |
+| <code style=" color: #4183c4;">delay</code>           | <code >int</code>     | <code >45</code>   |Zeit in Minuten bis zur Warnung vor dem Ausschalten.|
+| <code style=" color: #4183c4;">revalidate</code>      | <code >boolean</code> | <code >true</code> |Ob nach `delay` eine Warnung vor dem nach `revalidateDelay` ausschalten mit der möglichkeit zum einbehalten gesendet werden soll. |
+| <code style=" color: #4183c4;">revalidateDelay</code> | <code >int</code>     | <code >5</code>   |Zeit in Minuten nach der ausgeschalten wird.|
 
-## Pins
-
-| Name                                          | Typ               | Standartwert     | Information |
-| --------------------------------------------- | ----------------- | ---------------- | ----------- |
-| <code style=" color: #4183c4;">SS_PIN</code>  | <code >int</code> | <code >21</code> |             |
-| <code style=" color: #4183c4;">RST_PIN</code> | <code >int</code> | <code >22</code> |             |
-| <code style=" color: #4183c4;">relay</code>   | <code >int</code> | <code >16</code> |             |
-
-## Notify
+### Notifikation
 
 | Name                                              | Typ                    | Standartwert                                | Information |
 | ------------------------------------------------- | ---------------------- | ------------------------------------------- | ----------- |
-| <code style=" color: #4183c4;">audio</code>       | <code >object[]</code> | <code >{}</code>                            |             |
-| <code style=" color: #4183c4;">notify</code>      | <code >boolean</code>  | <code >false</code>                         |             |
-| <code style=" color: #4183c4;">pathToSound</code> | <code >string</code>   | <code ><strong>erforderlich</strong></code> |             |
-| <code style=" color: #4183c4;">volume</code>      | <code >int</code>      | <code >1</code>                             |             |
+| <code style=" color: #4183c4;">notify</code>      | <code >boolean</code>  | <code >false</code>                         |Ob die Warnung mit einem Sound gemacht werden soll.|
+| <code style=" color: #4183c4;">pathToSound</code> | <code >string</code>   | <code ><strong>erforderlich</strong></code> |Der Dateipfad zum Sound auf der eingesteckten SD-Karte|
+| <code style=" color: #4183c4;">volume</code>      | <code >int</code>      | <code >1</code>                             |Lautstärke des Sounds, 0-100.|
 
 \*Erforderlich falls 'notify' auf true gesetzt ist.
 
+# ToDo
+[x] Readme
+[x] JSON processing
+[ ] Store Settings in EEPROM
+[ ] Sound-Notification
+[ ] Test system
 > **Note:** Bei Problem oder Fragen können Sie mich auf **Discord** erreichen oder ein **Issue** erstellen.
 
 > Credits: <a href="https://github.com/toqix" style="color: #4183c4;">Toqix</a>
