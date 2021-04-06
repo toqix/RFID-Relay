@@ -1,24 +1,15 @@
+
 {
-  "delay": 45,
-  "revalidate": true,
-  "revalidateDelay": 45,
-  "turnOff": true,
-  "turnOffDelay": 0.5,
-  "pins": {
-    "SS_PIN": 21,
-    "RST_PIN": 22,
-    "relay": 16
-  },
-  "cards": [
-    {
-      "owner": "Thomas Gatterer",
-      "uuid": "782d64d2-a0d4-4249-b5d1-84d01c89a48e"
-    }
-  ],
-  "audio": {
-    "enabled": false,
-    "server": "http://example.com",
-    "pathToSound": "/sounds/notify.mp3",
-    "volume": 1
-  }
+    "delay": 45,
+    "revalidate": true,
+    "revalidateDelay": 5,
+    "notify": true,
+    "pathToSound": "/0001.mp3",
+    "volume": 90,
+    "cards": [
+        {
+            "owner": "Vorname Nachname",
+            "uuid": "782d64d2-a0d4-4249-b5d1-84d01c89a48e"
+        }
+    ]
 }
