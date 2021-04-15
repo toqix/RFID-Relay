@@ -140,10 +140,10 @@ Werden in der JSON gesetzt und vom Arduino gespeichert.
 [x] Readme
 [x] JSON processing
 [ ] Store Settings in EEPROM
-> **Note:** EEPROM hat nur 256 plätze für je 256bits, was das speichern von UUIDs unmöglich macht  -> Settings ohne UUIDs zu speichern ist nur begrenzt sinnvoll.
-
 [x] Sound-Notification
 [x] Test system
+
+> **Achtung:** EEPROM hat nur 256 plätze für je 256bits, was das speichern von UUIDs unmöglich macht  -> Settings ohne UUIDs zu speichern ist nur begrenzt sinnvoll.
 > **Note:** Bei Problem oder Fragen können Sie mich auf **Discord** erreichen oder ein **Issue** erstellen.
 
 > Credits: <a href="https://github.com/toqix" style="color: #4183c4;">toqix</a>
