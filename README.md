@@ -18,10 +18,11 @@ Ein mit RFID-Karten steuerbares Relay. Es verfügt über die Möglichkeit einen 
 2. <a href="#first" style="color: #4183c4;">second</a>
 3. <a href="#first" style="color: #4183c4;">third</a>
 
+>**Coming soon**: Bötigte Bauteile
+
 ## Connection
 
 So wird der ESP32 mit dem RC522 verbunden:
-
 | ESP32   | RC22 |
 | ------- | ---- |
 | Gpio 23 | MOSI |
@@ -30,9 +31,20 @@ So wird der ESP32 mit dem RC522 verbunden:
 | Gpio 19 | MISO |
 | Gpio 18 | SCK  |
 | GND     | GND  |
-| VCC     | VCC  |
+| 3v3     | VCC  |
 
-> **Missing:** Sound-Modul, Relay
+Relay
+|ESP32| Relay|
+|-----|------|
+|Gpio 16 |S|
+|GND|-|
+|3v3|+|
+
+Buzzer
+|ESP32|Buzzer|
+|---|---|
+|Gpio 12|+|
+|GND|-|
 
 # Installation für die Verwendung/ Bearbeitung des Quellcodes<a name="setup2"></a>
 
@@ -84,8 +96,13 @@ Kann nur in der 'rfid_02.ino' geändert werden. (/rfid_02/rfid_02.ino)
 | <code style=" color: #4183c4;">ssid</code>       | <code >string</code>   | <code ><strong>erforderlich</strong></code> |Wlan Name.|
 | <code style=" color: #4183c4;">password</code>   | <code >string</code>   | <code ><strong>erforderlich</strong></code> |Wlan Passwort.|
 | <code style=" color: #4183c4;">server</code>     | <code >string</code>   | <code ><strong>erforderlich</strong></code> | Link zur JSON-Datei mit den UUIDs.|
-| <code style=" color: #4183c4;">mastercard</code> | <code >object[]</code> | <code >'{}'</code>                          |UUID einer Chip-Karte, welche immer funktioniert.|
+| <code style=" color: #4183c4;">mastercard</code> | <code >string</code> | <code >""</code>                          |UUID einer Chip-Karte, welche immer funktioniert.|
 | <code style=" color: #4183c4;">relay</code>   | <code >int</code> | <code >16</code> |GPIO Pin an den das Relay angeschlossen wird.|
+| <code style=" color: #4183c4;">buzzer</cod>   | <code >int</code> | <code >12</code> |GPIO Pin an den der Buzzer angeschlossen wird.|
+| <code style=" color: #4183c4;">uuids</code>|JsonArray| <code >{}</code> |Liste von JsonObject/Card mit Benutzer und UUID. |
+| <code style=" color: #4183c4;">card/uuid</code>|JsonObject| <code >erforderlich</code> |JsonObject/Card mit Benutzer und UUID. (gespeichert in uuids). |
+
+
 
 # Globale Konfiguration
 
@@ -95,12 +112,10 @@ Inteface:
 
 ```json
 {
-    "delay": 45,
+    "turnOffDelay": 45,
     "revalidate": true,
     "revalidateDelay": 5,
     "notify": true,
-    "pathToSound": "/0001.mp3",
-    "volume": 90,
     "cards": [
         {
             "owner": "Vorname Nachname",
@@ -114,29 +129,21 @@ Inteface:
 
 ## Haupteinstellungen
 Werden in der JSON gesetzt und vom Arduino gespeichert.
-### Abschallt-Zeiten
 | Name                                                  | Typ                   | Standartwert       | Information |
 | ----------------------------------------------------- | --------------------- | ------------------ | ----------- |
-| <code style=" color: #4183c4;">delay</code>           | <code >int</code>     | <code >45</code>   |Zeit in Minuten bis zur Warnung vor dem Ausschalten.|
-| <code style=" color: #4183c4;">revalidate</code>      | <code >boolean</code> | <code >true</code> |Ob nach `delay` eine Warnung vor dem nach `revalidateDelay` ausschalten mit der möglichkeit zum einbehalten gesendet werden soll. |
+| <code style=" color: #4183c4;">turnOffDelay</code>           | <code >int</code>     | <code >45</code>   |Zeit in Minuten bis zur Warnung vor dem Ausschalten.|
+| <code style=" color: #4183c4;">revalidate</code>      | <code >boolean</code> | <code >true</code> |Ob nach `turnOffDelay` eine Warnung vor dem nach `revalidateDelay` ausschalten mit der möglichkeit zum einbehalten gesendet werden soll. |
 | <code style=" color: #4183c4;">revalidateDelay</code> | <code >int</code>     | <code >5</code>   |Zeit in Minuten nach der ausgeschalten wird.|
-
-### Notifikation
-
-| Name                                              | Typ                    | Standartwert                                | Information |
-| ------------------------------------------------- | ---------------------- | ------------------------------------------- | ----------- |
-| <code style=" color: #4183c4;">notify</code>      | <code >boolean</code>  | <code >false</code>                         |Ob die Warnung mit einem Sound gemacht werden soll.|
-| <code style=" color: #4183c4;">pathToSound</code> | <code >string</code>   | <code ><strong>erforderlich</strong></code> |Der Dateipfad zum Sound auf der eingesteckten SD-Karte|
-| <code style=" color: #4183c4;">volume</code>      | <code >int</code>      | <code >90</code>                             |Lautstärke des Sounds, 0-100.|
-
-\*Erforderlich falls 'notify' auf true gesetzt ist.
+| <code style=" color: #4183c4;">notify</code>      | <code >boolean</code>  | <code >false</code>                         |Ob Sound Benachrigungen aktiv sein sollen. Z.B.: Beim ein/aus schalten, warnungen, ... .|
 
 # ToDo
 [x] Readme
 [x] JSON processing
 [ ] Store Settings in EEPROM
-[ ] Sound-Notification
-[ ] Test system
+> **Note:** EEPROM hat nur 256 plätze für je 256bits, was das speichern von UUIDs unmöglich macht  -> Settings ohne UUIDs zu speichern ist nur begrenzt sinnvoll.
+
+[x] Sound-Notification
+[x] Test system
 > **Note:** Bei Problem oder Fragen können Sie mich auf **Discord** erreichen oder ein **Issue** erstellen.
 
 > Credits: <a href="https://github.com/toqix" style="color: #4183c4;">Toqix</a>
