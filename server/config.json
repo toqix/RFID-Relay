@@ -4,8 +4,6 @@
     "revalidate": true,
     "revalidateDelay": 5,
     "notify": true,
-    "pathToSound": "/0001.mp3",
-    "volume": 90,
     "cards": [
         {
             "owner": "Vorname Nachname",
