@@ -99,8 +99,6 @@ Kann nur in der 'rfid_02.ino' geändert werden. (/rfid_02/rfid_02.ino)
 | <code style=" color: #4183c4;">mastercard</code> | <code >string</code> | <code >""</code>                          |UUID einer Chip-Karte, welche immer funktioniert.|
 | <code style=" color: #4183c4;">relay</code>   | <code >int</code> | <code >16</code> |GPIO Pin an den das Relay angeschlossen wird.|
 | <code style=" color: #4183c4;">buzzer</cod>   | <code >int</code> | <code >12</code> |GPIO Pin an den der Buzzer angeschlossen wird.|
-| <code style=" color: #4183c4;">uuids</code>|JsonArray| <code >{}</code> |Liste von JsonObject/Card mit Benutzer und UUID. |
-| <code style=" color: #4183c4;">card/uuid</code>|JsonObject| <code >erforderlich</code> |JsonObject/Card mit Benutzer und UUID. (gespeichert in uuids). |
 
 
 
@@ -135,6 +133,8 @@ Werden in der JSON gesetzt und vom Arduino gespeichert.
 | <code style=" color: #4183c4;">revalidate</code>      | <code >boolean</code> | <code >true</code> |Ob nach `turnOffDelay` eine Warnung vor dem nach `revalidateDelay` ausschalten mit der möglichkeit zum einbehalten gesendet werden soll. |
 | <code style=" color: #4183c4;">revalidateDelay</code> | <code >int</code>     | <code >5</code>   |Zeit in Minuten nach der ausgeschalten wird.|
 | <code style=" color: #4183c4;">notify</code>      | <code >boolean</code>  | <code >false</code>                         |Ob Sound Benachrigungen aktiv sein sollen. Z.B.: Beim ein/aus schalten, warnungen, ... .|
+| <code style=" color: #4183c4;">uuids</code>|JsonArray| <code >{}</code> |Liste von JsonObject/Card mit Benutzer und UUID. |
+| <code style=" color: #4183c4;">card/uuid</code>|JsonObject| <code >erforderlich</code> |JsonObject/Card mit Benutzer und UUID. (gespeichert in uuids). |
 
 # ToDo
 [x] Readme
@@ -146,4 +146,4 @@ Werden in der JSON gesetzt und vom Arduino gespeichert.
 [x] Test system
 > **Note:** Bei Problem oder Fragen können Sie mich auf **Discord** erreichen oder ein **Issue** erstellen.
 
-> Credits: <a href="https://github.com/toqix" style="color: #4183c4;">Toqix</a>
+> Credits: <a href="https://github.com/toqix" style="color: #4183c4;">toqix</a>
