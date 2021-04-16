@@ -12,13 +12,25 @@ Ein mit RFID-Karten steuerbares Relay. Es verfügt über die Möglichkeit einen 
 
 # Installation/ Setup<a name="setup"></a>
 
-## Voraussetzungen
+## Bauteile
+Benötigt werden **4 Module** und eine Möglichkeit alles zu verbinden, entweder mit **Jumper wires** oder per Kabel und Löten. 
 
-1. <a href="#first" style="color: #4183c4;">first</a>
-2. <a href="#first" style="color: #4183c4;">second</a>
-3. <a href="#first" style="color: #4183c4;">third</a>
+### ESP32
+Ein ESP32 Mikrocontroller. (Der Computer der das ganze System steuert)
+> Auf <a href="https://www.amazon.de/dp/B071P98VTG/ref=twister_B07Z6CSD9K?_encoding=UTF8&psc=1">Amazon</a> für **8,36 €**. 
+### RC522
+Ein RC522 RFID Modul. (Scannt die Chips)
+> Auf <a href="https://www.amazon.de/AZDelivery-Reader-Arduino-Raspberry-gratis/dp/B01M28JAAZ/ref=sr_1_1_sspa?dchild=1&keywords=rc522&qid=1618571460&sr=8-1-spons&psc=1&smid=A1X7QLRQH87QA3&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEyVjBRQkNQMUdFUlEyJmVuY3J5cHRlZElkPUEwMjQ0MjgyVElJOUxOOUVWWTZBJmVuY3J5cHRlZEFkSWQ9QTAzNjIyNzgxT0dMVTEzNDhGTE5WJndpZGdldE5hbWU9c3BfYXRmJmFjdGlvbj1jbGlja1JlZGlyZWN0JmRvTm90TG9nQ2xpY2s9dHJ1ZQ==">Amazon</a> für **4,84 €**. 
 
->**Coming soon**: Bötigte Bauteile
+### Relay
+Ein Relay, am besten/einfachsten als Modul. (Steuert den Fernseher)
+> Auf <a href="https://www.amazon.de/AZDelivery-1-Relais-High-Level-Trigger-Arduino-inklusive/dp/B07TYG14N6/ref=sr_1_7_sspa?__mk_de_DE=ÅMÅŽÕÑ&dchild=1&keywords=Relay+Module&qid=1618571881&sr=8-7-spons&psc=1&smid=A1X7QLRQH87QA3&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEyMlY4QVgwS0pYT05VJmVuY3J5cHRlZElkPUEwNDU3MzgyM1RSQzNBV0daSTVYSSZlbmNyeXB0ZWRBZElkPUEwMzgzNDk0M0pXMThFVU5HUTRZViZ3aWRnZXROYW1lPXNwX210ZiZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU=">Amazon</a> für **4,33 €**.
+
+### Buzzer
+Ein Buzzer. (Optional, für das Audio-Feedback)
+> Auf <a href="https://www.amazon.de/AZDelivery-KY-006-Passives-Buzzer-Arduino/dp/B089QHLRSG/ref=sr_1_3_sspa?__mk_de_DE=ÅMÅŽÕÑ&dchild=1&keywords=Buzzer&qid=1618572043&sr=8-3-spons&smid=A1X7QLRQH87QA3&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEyT05TWExRTDZRVFBPJmVuY3J5cHRlZElkPUEwOTIyNzczMjVGODJLMVVURTQ5SiZlbmNyeXB0ZWRBZElkPUEwOTQ3NzMwMUdEUjBUSEdLSFNSWCZ3aWRnZXROYW1lPXNwX2F0ZiZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU&th=1">Amazon</a> für **4,84 €**.
+
+> <a style=" color: #4183c4;">**Wichtig** Alle Module sind bei den meisten Online-Shops und Elektronik-Läden erhältlich. Der Preis beträgt fast ein Drittel wenn die Module in höherer Stückzahl gekauft werden.
 
 ## Connection
 
@@ -87,9 +99,14 @@ Warten bis alles installiert ist und dann sollte der Code ohne Fehler kompiliere
 
 > Wichtig: Hierbei werden Administratorrechte benötigt.
 
+## Installation
+Wenn alles installiert ist kann fortgefahren werden. Als nächstes kann entweder das GIT-Repository geklont werden oder einfach als zib heruntergeladen werden. Danach muss man `/rfid_02/rfid_02.ino` öffnen. In der Arduino IDE bei `Tools/Board/ESP32 Arduino/ESP32 Dev Module` auswählen und bei `Tools/Port` den Port des angeschlossenen Arduinos auswählen. Jetzt kann der Sketch mit Upload auf den Arduino geladen werden. Weiter Konfiguration können wie unten erklärt am Sketch vorgenommen werden.
+
+> **Wichtig** Bei Problemen kontaktiert mich bitte entweder über Discord `Toqix#5435` oder per Issue.
+
 # Lokale Konfiguration<a name="config"></a>
 
-Kann nur in der 'rfid_02.ino' geändert werden. (/rfid_02/rfid_02.ino)
+Kann nur in der `rfid_02.ino` geändert werden. (/rfid_02/rfid_02.ino)
 
 | Name                                             | Typ                    | Standartwert                                | Information |
 | ------------------------------------------------ | ---------------------- | ------------------------------------------- | ----------- |
@@ -137,11 +154,11 @@ Werden in der JSON gesetzt und vom Arduino gespeichert.
 | <code style=" color: #4183c4;">card/uuid</code>|JsonObject| <code >erforderlich</code> |JsonObject/Card mit Benutzer und UUID. (gespeichert in uuids). |
 
 # ToDo
-[x] Readme
-[x] JSON processing
-[ ] Store Settings in EEPROM
-[x] Sound-Notification
-[x] Test system
+- [x] Readme
+- [x] JSON processing
+- [ ] Store Settings in EEPROM
+- [x] Sound-Notification
+- [x] Test system
 
 > **Achtung:** EEPROM hat nur 256 plätze für je 256bits, was das speichern von UUIDs unmöglich macht  -> Settings ohne UUIDs zu speichern ist nur begrenzt sinnvoll.
 > **Note:** Bei Problem oder Fragen können Sie mich auf **Discord** erreichen oder ein **Issue** erstellen.
