@@ -2,6 +2,8 @@
 
 Ein mit RFID-Karten steuerbares Relay. Es verfügt über die Möglichkeit einen zum Beispiel Fernseher **ein** und **aus** zu schalten. Nach dem verifizeren durch eine Chipkarte wird `{revalidateDelay}` gewartet, bis die Session ausgelaufen ist und eine neue Verifizerung angefordert wird. Wenn dies in `{turnOffDelay}` nicht passiert, schaltet das Relay sich aus.
 
+> **Offline-Modus** Wenn der Arduino die Verbindung zum Internet verliert, wird er alle `{retryWifiDelay}` versuchen sich erneut zu verbinden, sollte der Arduino keine UUID's im RAM haben wird das Relay auf EIN geschalten bis die Verbindung wiederhergestellt werden kann.
+> 
 # Inhaltsverzeichnis
 
 1. <a href="#setup" style="color: #4183c4;">Installation/ Setup</a>
@@ -115,7 +117,8 @@ Kann nur in der `rfid_02.ino` geändert werden. (/rfid_02/rfid_02.ino)
 | <code style=" color: #4183c4;">server</code>     | <code >string</code>   | <code ><strong>erforderlich</strong></code> | Link zur JSON-Datei mit den UUIDs.|
 | <code style=" color: #4183c4;">mastercard</code> | <code >string</code> | <code >""</code>                          |UUID einer Chip-Karte, welche immer funktioniert.|
 | <code style=" color: #4183c4;">relay</code>   | <code >int</code> | <code >16</code> |GPIO Pin an den das Relay angeschlossen wird.|
-| <code style=" color: #4183c4;">buzzer</cod>   | <code >int</code> | <code >12</code> |GPIO Pin an den der Buzzer angeschlossen wird.|
+| <code style=" color: #4183c4;">buzzer</code>   | <code >int</code> | <code >12</code> |GPIO Pin an den der Buzzer angeschlossen wird.|
+| <code style=" color: #4183c4;">retryWifiDelay</code>   | <code >long int</code> | <code >12000</code> |Interval in millisekunden, in welchem der Arduino versucht sich erneut mit dem WLAN zu verbinden.|
 
 
 
@@ -153,14 +156,13 @@ Werden in der JSON gesetzt und vom Arduino gespeichert.
 | <code style=" color: #4183c4;">uuids</code>|JsonArray| <code >{}</code> |Liste von JsonObject/Card mit Benutzer und UUID. |
 | <code style=" color: #4183c4;">card/uuid</code>|JsonObject| <code >erforderlich</code> |JsonObject/Card mit Benutzer und UUID. (gespeichert in uuids). |
 
+
 # ToDo
 - [x] Readme
 - [x] JSON processing
-- [ ] Store Settings in EEPROM
 - [x] Sound-Notification
 - [x] Test system
 
-> **Achtung:** EEPROM hat nur 256 plätze für je 256bits, was das speichern von UUIDs unmöglich macht  -> Settings ohne UUIDs zu speichern ist nur begrenzt sinnvoll.
-> **Note:** Bei Problem oder Fragen können Sie mich auf **Discord** erreichen oder ein **Issue** erstellen.
+> **Note:** Bei Problem oder Fragen können Sie mich auf **Discord** erreichen oder ein **Issue** erstellen. (Toqix#5435)
 
 > Credits: <a href="https://github.com/toqix" style="color: #4183c4;">toqix</a>
