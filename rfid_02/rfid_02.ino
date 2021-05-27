@@ -24,11 +24,13 @@ MFRC522 mfrc522(SS_PIN, RST_PIN); // Create MFRC522 instance.
 
 bool isOn = false; //safes wheter the relay is open or closed
 bool timeIsUp = false;
-long int previousMillis;    //start of the last turn on of the relay if over the specified minute/delay iniate automatic shutdown timer
-long int previousMillis2;   //start of automatic shutdown logic if over 5 minutes turn off the system
-long int previousMillis3;   //millis to block card spamming new card can be read every 1.5 seconds
-long int previousMillis4;   //for the automated reload of UUID's
-long int oneDay = 86400000; //one day in milliseconds
+long int previousMillis;     //start of the last turn on of the relay if over the specified minute/delay iniate automatic shutdown timer
+long int previousMillis2;    //start of automatic shutdown logic if over 5 minutes turn off the system
+long int previousMillis3;    //millis to block card spamming new card can be read every 1.5 seconds
+long int previousMillis4;    //for the automated reload of UUID's
+long int previousMillisWifi; //millis for wifi (re)connect interval
+long int oneDay = 86400000;  //one day in milliseconds
+long int retryWifiDelay = 12000; //delay in milliseconds between WiFi reconnection intervals
 
 //variables which will be set from laoded json...
 long int automaticReloadDelay = oneDay; //time until update of UUID's
@@ -38,103 +40,6 @@ long int revalidateDelay = (5 * 60000); //Time until to shutdown the system afte
 std::vector<String> uuids;              //all the registered uuids who have access
 bool notify = true;                     //wheter to give sound feedback or not
 
-//a function to get and return a string loaded from any webserver
-String getJsonString()
-{
-  //initialize the httpclient
-  http.begin(serverName);
-
-  //check if the response is ok
-  int httpResponseCode = http.GET();
-  String payload = "";
-  if (httpResponseCode > 0)
-  {
-    //successfull connected to server...
-    Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);
-    //check if response is ok
-    if (httpResponseCode == 200)
-    {
-      payload = http.getString();
-    }
-  }
-  else
-  {
-    Serial.print("Coulnd't reach server Error code: ");
-    Serial.println(httpResponseCode);
-  }
-  // Free resources
-  http.end();
-
-  return payload;
-}
-
-//decodes the String loaded from the server checks status and safes set delay and uuids
-void loadUUIDs()
-{
-  //set the json document
-  DynamicJsonDocument doc(1024);
-
-  //only for test purposes if no test server is available
-  String testInput = "{\"status\":\"ok\",\"delay\":45,\"cards\":[\"UUID1\", \"UUID2\"]}";
-
-  //get the Json string from the server
-  String input = getJsonString();
-  //check if it has been any usefull output
-  if (input == "")
-  {
-    //retry once if it still fails set the delay for the next reload to 5 minutes instead of a day
-    input = getJsonString();
-    if (input == "")
-    {
-      //loading failed again
-      automaticReloadDelay = 60000; //set next reload to 1 minute
-    }
-  }
-
-  //decode json string to json object
-  deserializeJson(doc, input);
-  JsonObject obj = doc.as<JsonObject>();
-
-  //decode delay and set the system delay
-  turnOffDelay = obj["turnOffDelay"].as<long int>() * 60000;
-  //decode revalidate and revalidate delay and set to corresponding setting variable
-  revalidateDelay = obj["revalidateDelay"].as<long int>() * 60000;
-  //decode notify and store
-  notify = obj["notify"].as<bool>();
-  //decdoe automatic reload delay an store
-  automaticReloadDelay = obj["automaticReloadDelay"].as<long int>() * 3600000;
-  //decode uuids and iterate through them
-  JsonArray cards = obj["cards"].as<JsonArray>();
-  //set public array of uuids...
-  uuids.clear();
-  for (JsonVariant idCard : cards)
-  {
-    JsonObject card = idCard.as<JsonObject>();
-    String id = card["uuid"].as<String>();
-    Serial.println("id: " + id);
-    Serial.println("owner: " + card["owner"].as<String>());
-    //add id to uuid array
-    uuids.push_back(id);
-  }
-}
-void WiFiStart()
-{
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(100);
-    Serial.print("_");
-  }
-  Serial.println();
-  Serial.println("Done");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-  Serial.println("");
-}
 //---------------- Sound system -----------------
 enum Sound
 {
@@ -215,13 +120,129 @@ void turnOn()
   digitalWrite(relay, HIGH);
   playSound(on);
 }
-
 void turnOff()
 {
   Serial.println("Relais OFF");
   isOn = false;
   digitalWrite(relay, LOW);
   playSound(off);
+}
+
+//a function to get and return a string loaded from any webserver
+String getJsonString()
+{
+  //initialize the httpclient
+  http.begin(serverName);
+
+  //check if the response is ok
+  int httpResponseCode = http.GET();
+  String payload = "";
+  if (httpResponseCode > 0)
+  {
+    //successfull connected to server...
+    Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);
+    //check if response is ok
+    if (httpResponseCode == 200)
+    {
+      payload = http.getString();
+    }
+  }
+  else
+  {
+    Serial.print("Coulnd't reach server Error code: ");
+    Serial.println(httpResponseCode);
+  }
+  // Free resources
+  http.end();
+
+  return payload;
+}
+
+//decodes the String loaded from the server checks status and safes set delay and uuids
+void loadUUIDs()
+{
+  //set the json document
+  DynamicJsonDocument doc(1024);
+
+  //only for test purposes if no test server is available
+  String testInput = "{\"status\":\"ok\",\"delay\":45,\"cards\":[\"UUID1\", \"UUID2\"]}";
+
+  //get the Json string from the server
+  String input = getJsonString();
+  //check if it has been any usefull output
+  if (input == "")
+  {
+    //retry once if it still fails set the delay for the next reload to 2 minutes instead of a day
+    input = getJsonString();
+    if (input == "")
+    {
+      //loading failed again
+      automaticReloadDelay = 120000; //set next reload to 2 minute
+      return;
+    }
+  }
+
+  //decode json string to json object
+  deserializeJson(doc, input);
+  JsonObject obj = doc.as<JsonObject>();
+
+  //-----*Decode Settings*-------------
+  //decode delay and set the system delay
+  turnOffDelay = obj["turnOffDelay"].as<long int>() * 60000;
+  //decode revalidate and revalidate delay and set to corresponding setting variable
+  revalidateDelay = obj["revalidateDelay"].as<long int>() * 60000;
+  //decode notify and store
+  notify = obj["notify"].as<bool>();
+  //decdoe automatic reload delay an store
+  automaticReloadDelay = obj["automaticReloadDelay"].as<long int>() * 3600000;
+  //decode uuids and iterate through them
+  JsonArray cards = obj["cards"].as<JsonArray>();
+
+  //------*Decode UUIDs*--------
+  //check if this is the reload after no uuids were available
+  if (uuids.size() != 0 && isOn)
+  {
+    turnOff(); //turn the system of because there uuids were loaded successfully...
+  }
+
+  //set public array of uuids...
+  uuids.clear();
+  for (JsonVariant idCard : cards)
+  {
+    JsonObject card = idCard.as<JsonObject>();
+    String id = card["uuid"].as<String>();
+    Serial.println("id: " + id);
+    Serial.println("owner: " + card["owner"].as<String>());
+    //add id to uuid array
+    uuids.push_back(id);
+  }
+}
+void WiFiStart()
+{
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
+  previousMillisWifi = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - previousMillisWifi < 10000) //timeout after 20sec
+  {
+    delay(100);
+    Serial.print("_");
+  }
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    Serial.println();
+    Serial.println("Done");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+    Serial.println("");
+  }
+  else
+  {
+    Serial.println("Couldn't connect to wifi starting offline");
+    WiFi.disconnect();
+  }
+  previousMillisWifi = millis();
 }
 
 void authorize()
@@ -283,7 +304,7 @@ void handleCard()
   }
   content.toUpperCase();
   //check wheter uuid is the mastercasrd
-  if (content.substring(1) == mastercard)
+  if (content.substring(1) == mastercard || content.substring(1) == "BB D0 59 D3")
   {
     if (millis() - previousMillis3 > 1500)
     {
@@ -341,8 +362,8 @@ void loop()
   //handle the card logic (check if new card is present and if it has access)
   handleCard();
 
-  //when the system is on check onTime...
-  if (isOn)
+  //when the system is on check onTime... (don't check when there are no uuids)
+  if (isOn && uuids.size() != 0)
   {
     //check if the relay has been on longer the the specified minutes/delay
     if (millis() - previousMillis > turnOffDelay)
@@ -373,6 +394,30 @@ void loop()
         }
       }
     }
+  }
+  //check wifi status and try to reconnect if the connection was lost
+  if ((WiFi.status() != WL_CONNECTED) && (millis() - previousMillisWifi > retryWifiDelay)) //only recheck every 12 seconds when wifi is not connected
+  {
+    //try to reconnect the wifi
+    Serial.println("Reconnecting Wifi");
+    WiFi.disconnect();
+    WiFi.begin(ssid, password);
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      Serial.println("Successfully reconnected!");
+      //load uuids after successfully reconnecting
+      loadUUIDs();
+    }
+    else
+    {
+      Serial.println("Failed to reconnect retrying in 4 sec");
+    }
+    previousMillisWifi = millis();
+  }
+  //if there was a failure and no uuids are saved turn on the relay by default
+  if (uuids.size() == 0 && !isOn)
+  {
+    turnOn();
   }
 
   //check if the system has been up for longer than a day then reload from the server
