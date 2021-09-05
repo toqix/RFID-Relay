@@ -1,9 +1,9 @@
-
 {
-    "delay": 45,
+    "turnOffDelay": 45,
     "revalidate": true,
     "revalidateDelay": 5,
     "notify": true,
+    "automaticReloadDelay": 6,
     "cards": [
         {
             "owner": "Vorname Nachname",
