@@ -1,6 +1,6 @@
 # RFID Relay
 
-Ein mit RFID-Karten steuerbares Relay. Es verfügt über die Möglichkeit einen zum Beispiel Fernseher **ein** und **aus** zu schalten. Nach dem verifizeren durch eine Chipkarte wird `{revalidateDelay}` gewartet, bis die Session ausgelaufen ist und eine neue Verifizerung angefordert wird. Wenn dies in `{turnOffDelay}` nicht passiert, schaltet das Relay sich aus.
+Ein mit RFID-Karten steuerbares Relay. Es verfügt über die Möglichkeit eine Entgerät zum Beispiel einen Fernseher **ein** und **aus** zu schalten. Nach dem verifizeren durch eine Chipkarte wird `{revalidateDelay}` gewartet, bis die Session ausgelaufen ist und eine neue Verifizerung angefordert wird. Wenn dies in `{turnOffDelay}` nicht passiert, schaltet sich das Relay aus.
 
 > **Offline-Modus** Wenn der Arduino die Verbindung zum Internet verliert, wird er alle `{retryWifiDelay}` versuchen sich erneut zu verbinden, sollte der Arduino keine UUID's im RAM haben wird das Relay auf EIN geschalten bis die Verbindung wiederhergestellt werden kann.
 >
@@ -12,11 +12,9 @@ Ein mit RFID-Karten steuerbares Relay. Es verfügt über die Möglichkeit einen 
 
 ## Hardware Setup
 
-------
-
 ## Bauteile
 
-Benötigt werden **4 Module** und eine Möglichkeit alles zu verbinden, entweder mit **Jumper wires** oder per Kabel und Löten.
+Benötigt werden **4 Module** und eine Möglichkeit diese miteinander zu verkabeln, entweder mit **Jumper wires** oder per Kabel und Löten.
 
 ### ESP32
 
@@ -68,26 +66,25 @@ Buzzer
 
 ## Quellcode Installation
 
-------
-
 ## Arduino IDE
 
-Zuerst muss in der Arduino IDE, das ESP32 als Board hinzugefügt werden, hierfür in die **Einstellungen**, dann **Additional Boards Manager URLs** und dort den Link einfügen.
+### ESP32 Support
+
+Zuerst muss in der Arduino IDE, das ESP32 als Board hinzugefügt werden, hierfür muss man in die **Einstellungen**, dann zu **Additional Boards Manager URLs** und dort den Link einfügen.
 
 <pre>
 <code><a href="https://dl.espressif.com/dl/package_esp32_index.json" style="color: #4183c4">https://dl.espressif.com/dl/package_esp32_index.json</a></code>
 </pre>
 
-Danach die IDE Neustarten und in **Tools/Boards/Boards Manager** hier dann nach esp32 suchen und installieren.
-**CP210 Treiber**
+Danach die IDE Neustarten und in **Tools/Boards/Boards Manager** nach esp32 suchen und installieren.
+
+### CP210 Treiber
+
 Um eine Verbindung mit dem ESP32 zu ermöglichen werden die **CP210** Treiber benötigt **(auf MacOS Systemen sind diese vorinstalliert)** auf Linux und Windows Geräten wird dieser Treiber aber benötigt diesen bekommt man <a href="https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers">hier</a>.
 
 ## Python
 
-Um den ESP32 verwenden zu können muss Python installiert sein das sollte normalerweise aber schon auf deinem Computer installiert sein falls nicht ist hier eine Anleitung zur installation.
-
-<pre>
-<code><a href="https://www.python.org/downloads/" style="color: #4183c4">https://www.python.org/downloads/</a></code>
+Um den ESP32 verwenden zu können muss Python installiert sein das sollte normalerweise aber schon auf deinem Computer installiert sein falls nicht ist hier eine [Anleitung](https://www.python.org/downloads/) zur installation.
 </pre>
 
 ### PySerial
@@ -110,13 +107,11 @@ Warten bis alles installiert ist und dann sollte der Code ohne Fehler kompiliere
 > Wichtig: Hierbei werden Administratorrechte benötigt.
 
 ## Installation
-Wenn alles installiert ist kann fortgefahren werden. Als nächstes kann entweder das GIT-Repository geklont werden oder einfach als zib heruntergeladen werden. Danach muss man `/rfid_02/rfid_02.ino` öffnen. In der Arduino IDE bei `Tools/Board/ESP32 Arduino/ESP32 Dev Module` auswählen und bei `Tools/Port` den Port des angeschlossenen Arduinos auswählen. Jetzt kann der Sketch mit Upload auf den Arduino geladen werden. Weiter Konfiguration können wie unten erklärt am Sketch vorgenommen werden.
+Wenn alles installiert ist kann fortgefahren werden. Als nächstes kann das GIT-Repository entweder geklont werden oder einfach als zib heruntergeladen werden. Danach muss man `/rfid_02/rfid_02.ino` öffnen. In der Arduino IDE bei `Tools/Board/ESP32 Arduino/ESP32 Dev Module` auswählen und bei `Tools/Port` den Port des angeschlossenen Arduinos auswählen. Jetzt kann der Sketch mit Upload auf den Arduino geladen werden. Weiter Konfiguration können wie unten erklärt am Sketch vorgenommen werden.
 
 > **Wichtig** Bei Problemen kontaktiert mich bitte entweder über Discord `Toqix#5435` oder per Issue.
 
 ## Konfiguration
-
-------
 
 ### Lokale Einstellungen
 
